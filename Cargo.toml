@@ -1,6 +1,13 @@
 [package]
 name = "rstl"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
+description = "A simple but stylish todo list program."
+license = "GPL-3.0-or-later"
+repository = "https://github.com/OctoRocket/rstl"
+readme = "README.md"
+keywords = ["tui", "terminal", "todo"]
+categories = ["command-line-utilities"]
 
 [dependencies]
+ratatui = "0.27"
