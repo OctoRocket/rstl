@@ -4,19 +4,22 @@
     clippy::nursery,
     clippy::cargo,
 )]
+// Need it because ratatui has deps that have two
+// versions of the same crate :P
+#![allow(clippy::multiple_crate_versions)]
 
-use std::io::{stdout, Result};
-use ratatui::{backend::CrosstermBackend, crossterm::{terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen}, ExecutableCommand}, Terminal};
+mod render;
+
+use anyhow::Result;
 
 fn main() -> Result<()> {
-    let mut stdout_handle = stdout();
-    stdout_handle.execute(EnterAlternateScreen)?;
-    enable_raw_mode()?;
+    // Set up STDOUT for displaying
+    let mut terminal = ratatui::init();
 
-    let mut terminal = Terminal::new(CrosstermBackend::new(stdout_handle))?;
-    terminal.clear()?;
+    // Actually run the app
+    let render_result = render::render(&mut terminal);
 
-    stdout().execute(LeaveAlternateScreen)?;
-    disable_raw_mode()?;
-    Ok(())
+    // Return STDOUT to normal before exiting
+    ratatui::restore();
+    render_result
 }
