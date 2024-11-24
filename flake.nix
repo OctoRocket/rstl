@@ -9,24 +9,24 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = { nixpkgs, flake-utils, rust-overlay, ... }:
 
-  flake-utils.lib.eachDefaultSystem (system:
-    let
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [ rust-overlay.overlays.default ];
-      };
-    in {
-      devShells.default = pkgs.mkShell rec {
-        buildInputs = with pkgs; [
-          rust-bin.stable.latest.default
-          clang
-          mold
-          bacon
-        ];
-      };
-      packages.default = pkgs.callPackage ./default.nix {};
-    }
-  );
+  outputs = { nixpkgs, flake-utils, rust-overlay, ... }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [ rust-overlay.overlays.default ];
+        };
+      in {
+        devShells.default = pkgs.mkShell rec {
+          buildInputs = with pkgs; [
+            (rust-bin.stable.latest.default.override { extensions = ["rust-src"]; })
+            clang
+            mold
+            bacon
+          ];
+        };
+        packages.default = pkgs.callPackage ./default.nix {};
+      }
+    );
 }
